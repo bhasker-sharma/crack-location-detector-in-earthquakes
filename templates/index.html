@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Crack Location Detector</title>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌍 Crack Location Detector</h1>
+            <p>Input vibration speed and time differences to locate cracks accurately.</p>
+        </header>
+
+        <main>
+            <!-- The form to take inputs from the user -->
+            <form method="POST">
+                <div class="form-group">
+                    <label for="vibration_speed">Vibration Speed (m/s):</label>
+                    <input type="number" step="any" class="form-control" id="vibration_speed" name="vibration_speed" required>
+                </div>
+                
+                <!-- Loop through sensors and get the time differences -->
+                {% for sensor in sensors %}
+                    <div class="form-group">
+                        <label for="time_{{ sensor.id }}">Time Difference for {{ sensor.id }} (seconds):</label>
+                        <input type="number" step="any" class="form-control" id="time_{{ sensor.id }}" name="time_{{ sensor.id }}" required>
+                    </div>
+                {% endfor %}
+                
+                <button type="submit" class="btn btn-primary">Calculate Crack Location</button>
+            </form>
+            
+            <!-- If crack location data exists, show results -->
+            {% if crack_coords %}
+            <section class="results">
+                <h2>Crack Location</h2>
+                <p><strong>Latitude:</strong> {{ crack_coords[0] }}</p>
+                <p><strong>Longitude:</strong> {{ crack_coords[1] }}</p>
+                <h3>Visualization</h3>
+                <div class="visualization">
+                    <!-- Display Graph -->
+                    <div class="graph">
+                        <h4>Graph</h4>
+                        <img src="data:image/png;base64,{{ plot_data }}" alt="Graph">
+                    </div>
+                    <!-- Display Map -->
+                    <div class="map">
+                        <h4>Map</h4>
+                        {{ map_data|safe }}
+                    </div>
+                </div>
+            </section>
+            {% endif %}
+
+            <!-- Show error message if any -->
+            {% if error %}
+            <p class="error">{{ error }}</p>
+            {% endif %}
+        </main>
+
+        <footer>
+            <p>© 2024 Crack Detector. Built for precise solutions.</p>
+        </footer>
+    </div>
+</body>
+</html>
